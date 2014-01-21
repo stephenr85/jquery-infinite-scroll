@@ -37,7 +37,8 @@
         function onDataLoaded(data) {
             var prev = $('.last-scroll-row');
             if (prev.length && data.length) {
-                prev.after(data);
+                prev.after($(opts.itemSelector, data)); //Get the new items from the data
+                $this.find(opts.pagingSelector).replaceWith($(opts.pagingSelector, data));
                 prev.removeClass('last-scroll-row');
                 $this.find(opts.itemSelector + ':last').addClass('last-scroll-row');
                 scrollTriggered = 0;
@@ -52,6 +53,7 @@
             if (jQuery.isFunction(opts.onDataLoading)) {
                 opts.onDataLoading(currentScrollPage);
             }
+            var url = opts.nextSelector ? $this.find(opts.nextSelector).attr('href') : opts.dataPath + '?page='+currentScrollPage;
             $.get(opts.dataPath + '?page=' + currentScrollPage)
                 .always(onDataLoaded)
                 .fail(function() {
@@ -68,6 +70,8 @@
     $.fn.infiniteScroll.defaults = {
         dataPath: null,
         itemSelector: '.item',
+        nextSelector:'a.next',
+        pagingSelector:'.paging',
         onDataLoading: null, // function (page)
         onDataLoaded: null, // function (page)
         onDataError: null // function (page)
